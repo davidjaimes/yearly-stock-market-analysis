@@ -3,8 +3,11 @@ Attribute VB_Name = "VBAchallange"
 ' Author: David Jaimes
 ' Email: david@djaimes.com
 ' Web: https://djaimes.com
-' Date: 2019-Nov-16
+' Due Date: 2019-Nov-16
 ' UCSD Extension: Data Science and Visualization Boot Camp
+
+' Description of script: Dear user, if you run MAIN_PROGRAM it will fill the contents of asingle sheet in the workbook.
+' Otherwise, run WORKSHHET_LOOP to fill in all Sheets in the Workbook.
 Sub WORKSHEET_LOOP()
     Dim xsheet As Worksheet
     For Each xsheet In ThisWorkbook.Worksheets
@@ -22,19 +25,16 @@ Sub MAIN_PROGRAM()
     Range("I1:Q" & lastRow).ClearFormats
     ' Find unique values in A column and place results in I column.
     Range("A1:A" & lastRow).AdvancedFilter Action:=xlFilterCopy, CopyToRange:=Range("I1"), Unique:=True
-    ' Fill in Header Names between Columns I and L
-    Range("I1").Value = "Ticker"
-    Range("J1").Value = "Yearly Change"
-    Range("K1").Value = "Percent Change"
-    Range("L1").Value = "Total Stock Volume"
     ' Find the total number of rows in the Ticker column (i.e., I column)
     lastRowUnique = Range("I" & Rows.Count).End(xlUp).Row
-    ' Call FILL_FUNCTION to fill column J, K, and L.
+    ' Call FILL_FUNCTION to fill columns J, K, and L.
     For j = 2 To lastRowUnique
         Call FILL_FUNCTION(lastRow, j)
     Next j
     'Call CHALLANGES to find greatest percent increase/decrease and greatest volume
     Call CHALLANGES(lastRowUnique)
+    ' Call HEADERS to fill in the names of columns between I and Q
+    Call HEADERS("place holder")
 End Sub
 
 Sub FILL_FUNCTION(lastRow, j)
@@ -43,9 +43,12 @@ Sub FILL_FUNCTION(lastRow, j)
     Dim size, counter As Integer
     Dim summ As Double
     ' Get array of rows of for each Ticker symbol
+    ' size variable will be used to fill tickArray and store index for each tciker match
+    ' summ will be used to sum the Total Stock Volume for each Ticker
     size = 0
     summ = 0
     counter = 0
+    ' For speed performance, start the loop at the first match instance of Ticker symbol.
     indexMatch = Application.WorksheetFunction.Match(Range("I" & j).Value, Range("A2:A" & lastRow), 0)
     For i = indexMatch + 1 To lastRow
         If Range("A" & i).Value = Range("I" & j).Value Then
@@ -54,8 +57,9 @@ Sub FILL_FUNCTION(lastRow, j)
             size = size + 1
             summ = summ + Range("G" & i).Value
         End If
+        ' Exit from loop after getting a year's worth of data. Do not go to end of column A.
         counter = counter + 1
-        If counter > 370 Then
+        If counter > 366 Then
             Exit For
         End If
     Next i
@@ -63,29 +67,24 @@ Sub FILL_FUNCTION(lastRow, j)
     startPrice = Range("C" & tickArray(0)).Value
     endPrice = Range("F" & tickArray(size - 1)).Value
     yearlyChange = endPrice - startPrice
+    ' If yearly Chagnge is negative/positive, then highlight red/green.
     If yearlyChange < 0 Then
         Range("J" & j).Interior.ColorIndex = 3
     ElseIf yearlyChange > 0 Then
         Range("J" & j).Interior.ColorIndex = 4
     End If
-    Range("J" & j).Value = endPrice - startPrice
-    ' Find Percent Change
+    ' Find Percent Change and be careful about dividing by zero!
     If startPrice = 0 Then
         Range("K" & j).Value = Format(0#, "#.##%")
     Else
         Range("K" & j).Value = Format((endPrice - startPrice) / startPrice, "#.##%")
     End If
-    ' Find the Total Stock Volume
+    ' Save the Yearly Change and Total Stock Volume values.
+    Range("J" & j).Value = yearlyChange
     Range("L" & j).Value = summ
 End Sub
 
 Sub CHALLANGES(lastRowChal)
-    ' Fill in Header Names columns O, P and Q
-    Range("O2").Value = "Greatest % Increase"
-    Range("O3").Value = "Greatest % Decrease"
-    Range("O4").Value = "Greatest Total Volume"
-    Range("P1").Value = "Ticker"
-    Range("Q1").Value = "Value"
     ' Find the values for greatest increase, decrease, and volume
     greatIncrease = Application.WorksheetFunction.Max(Range("K2:K" & lastRowChal))
     Range("Q2").Value = Format(greatIncrease, "#.##%")
@@ -100,4 +99,18 @@ Sub CHALLANGES(lastRowChal)
     Range("P3").Value = Range("I" & indexDecrease + 1).Value
     indexVolume = Application.WorksheetFunction.Match(greatVolume, Range("L2:L" & lastRowChal), 0)
     Range("P4").Value = Range("I" & indexVolume + 1).Value
+End Sub
+
+Sub HEADERS(arg1)
+    ' Fill in Header Names between Columns I and L
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Yearly Change"
+    Range("K1").Value = "Percent Change"
+    Range("L1").Value = "Total Stock Volume"
+    ' Fill in Header Names columns O, P and Q
+    Range("O2").Value = "Greatest % Increase"
+    Range("O3").Value = "Greatest % Decrease"
+    Range("O4").Value = "Greatest Total Volume"
+    Range("P1").Value = "Ticker"
+    Range("Q1").Value = "Value"
 End Sub
