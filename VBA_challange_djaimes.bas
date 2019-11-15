@@ -8,6 +8,15 @@ Attribute VB_Name = "VBA_challange_djaimes"
 ' Description of script: Dear user, if you run FILL_SINGLE_SHEET it will fill the contents of a single sheet in the workbook.
 ' Otherwise, run WORKSHEET_LOOP to fill in all Sheets in the Workbook.
 
+Sub WORKSHEET_LOOP()
+    Dim xsheet As Worksheet
+    For Each xsheet In ThisWorkbook.Worksheets
+        xsheet.Select
+        Call FILL_SINGLE_SHEET
+        xsheet.Range("I:Q").Columns.AutoFit
+    Next xsheet
+End Sub
+
 Sub FILL_SINGLE_SHEET()
     ' Declare all variables for FILL_SINGLE_SHEET sub procedure.
     Dim i, lastrow, counter As Long
@@ -92,6 +101,4 @@ Sub FILL_SINGLE_SHEET()
     cells(2, 16).value = percentMaxTicker
     cells(3, 16).value = percentMinTicker
     cells(4, 16).value = volumeMaxTicker
-    ' Auto fit columns I (9) to Q ().
-    range("I:Q").autofit
 End Sub
