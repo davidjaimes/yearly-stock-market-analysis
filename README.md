@@ -14,7 +14,7 @@ Use VBA scripting to analyze real stock market data.
 
 ### VBA Code
 
-```visualbasic
+```vb
 ' Title: VBA Stock Market
 ' Author: David Jaimes
 ' Email: david@djaimes.com
