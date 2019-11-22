@@ -121,3 +121,7 @@ End Sub
 ### Stock Market, Yearly Summaries
 
 ![figure1](images/Stock_Summary_2014.png)
+
+![figure1](images/Stock_Summary_2015.png)
+
+![figure1](images/Stock_Summary_2016.png)
