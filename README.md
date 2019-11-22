@@ -117,3 +117,7 @@ Sub FILL_SINGLE_SHEET()
     cells(4, 16).value = volumeMaxTicker
 End Sub
 ```
+
+### Stock Market, Yearly Summaries
+
+![figure1](images/Stock_Summary_2014.png)
